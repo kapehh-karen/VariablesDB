@@ -1,0 +1,14 @@
+name: MsgPlayer
+main: me.kapehh.Variables.Main
+author: kapehh
+version: 1.0.0
+commands:
+    setvariable:
+        usage: /<command> <key> <value>
+        description: Задает значение ключа (только для op игроков и консоли)
+    getvariable:
+        usage: /<command> <key>
+        description: Показывает значение ключа
+    setvariablepass:
+        usage: /<command> <pass> <key> <value>
+        description: Задает значение ключа
