@@ -1,4 +1,4 @@
-name: MsgPlayer
+name: VariablesDB
 main: me.kapehh.Variables.Main
 author: kapehh
 version: 1.0.0
@@ -12,3 +12,6 @@ commands:
     setvariablepass:
         usage: /<command> <pass> <key> <value>
         description: Задает значение ключа
+    variablesdb:
+        usage: /<command> reload
+        description: Перезагрузить плагин

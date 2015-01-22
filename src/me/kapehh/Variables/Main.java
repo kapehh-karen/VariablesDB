@@ -5,6 +5,9 @@ import me.kapehh.main.pluginmanager.config.EventType;
 import me.kapehh.main.pluginmanager.config.PluginConfig;
 import me.kapehh.main.pluginmanager.db.PluginDatabase;
 import me.kapehh.main.pluginmanager.db.PluginDatabaseInfo;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,7 +16,7 @@ import java.sql.*;
 /**
  * Created by Karen on 21.01.2015.
  */
-public class Main extends JavaPlugin {
+public class Main extends JavaPlugin implements CommandExecutor {
     PluginConfig pluginConfig;
     PluginDatabase dbHelper;
     PluginDatabaseInfo dbInfo;
@@ -69,8 +72,34 @@ public class Main extends JavaPlugin {
             return;
         }
 
+        dbInfo = new PluginDatabaseInfo();
+
         pluginConfig = new PluginConfig(this);
         pluginConfig.addEventClasses(this).setup().loadData();
+
+        Commands.init(this, dbInfo, dbHelper);
+
+        getCommand("variablesdb").setExecutor(this);
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length < 1) {
+            return false;
+        }
+
+        if (!sender.isOp()) {
+            sender.sendMessage("You need OP!");
+            return true;
+        }
+
+        String cmd = args[0];
+        if (cmd.equalsIgnoreCase("reload")) {
+            pluginConfig.loadData();
+            return true;
+        }
+
+        return false;
     }
 
     @Override
