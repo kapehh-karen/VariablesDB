@@ -6,3 +6,4 @@ connect:
     login: root
     password: password
     table: variables
+variablepass: 'qwerty'

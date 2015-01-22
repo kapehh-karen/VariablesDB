@@ -18,15 +18,7 @@ public class Commands {
 
     private Commands() { }
 
-    public static String getVar(PluginDatabase database, String name) {
-        return "";
-    }
-
-    public static void setVar(PluginDatabase database, String name, String value) {
-
-    }
-
-    public static void init(final JavaPlugin plugin, final PluginDatabaseInfo info, final PluginDatabase database) {
+    public static void init(final Main plugin) {
         plugin.getCommand("setvariable").setExecutor(new CommandExecutor() {
             @Override
             public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -40,7 +32,7 @@ public class Commands {
                 }
 
                 try {
-                    database.prepareQueryUpdate("INSERT INTO " + info.getTable() + " VALUES(?, ?, now()) ON duplicate key update value = ?", args[0], args[1], args[1]);
+                    plugin.getDbHelper().prepareQueryUpdate("INSERT INTO " + plugin.getDbInfo().getTable() + " VALUES(?, ?, now()) ON duplicate key update value = ?", args[0], args[1], args[1]);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -56,14 +48,14 @@ public class Commands {
                 }
 
                 try {
-                    PluginDatabaseResult result = database.prepareQueryStart("SELECT * FROM " + info.getTable() + " WHERE `key` = ?", args[0]);
+                    PluginDatabaseResult result = plugin.getDbHelper().prepareQueryStart("SELECT * FROM " + plugin.getDbInfo().getTable() + " WHERE `key` = ?", args[0]);
                     ResultSet resultSet = result.getResultSet();
                     if (resultSet.next()) {
                         sender.sendMessage("Key: " + resultSet.getString("key") + ", Value: " + resultSet.getString("value"));
                     } else {
                         sender.sendMessage("Key not found!");
                     }
-                    database.queryEnd(result);
+                    plugin.getDbHelper().queryEnd(result);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -74,8 +66,21 @@ public class Commands {
         plugin.getCommand("setvariablepass").setExecutor(new CommandExecutor() {
             @Override
             public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+                if (args.length < 3) {
+                    return false;
+                }
 
-                return false;
+                if (!args[0].equals(plugin.getVarPass())) {
+                    sender.sendMessage("Incorrect password!");
+                    return true;
+                }
+
+                try {
+                    plugin.getDbHelper().prepareQueryUpdate("INSERT INTO " + plugin.getDbInfo().getTable() + " VALUES(?, ?, now()) ON duplicate key update value = ?", args[1], args[2], args[2]);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return true;
             }
         });
     }

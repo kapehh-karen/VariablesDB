@@ -20,10 +20,12 @@ public class Main extends JavaPlugin implements CommandExecutor {
     PluginConfig pluginConfig;
     PluginDatabase dbHelper;
     PluginDatabaseInfo dbInfo;
+    String varPass;
 
     @EventPluginConfig(EventType.LOAD)
     public void onConfigLoad(FileConfiguration cfg) {
         boolean isEnabled = cfg.getBoolean("connect.enabled");
+        varPass = cfg.getString("variablepass");
 
         if (dbHelper != null) {
             try {
@@ -77,7 +79,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
         pluginConfig = new PluginConfig(this);
         pluginConfig.addEventClasses(this).setup().loadData();
 
-        Commands.init(this, dbInfo, dbHelper);
+        Commands.init(this);
 
         getCommand("variablesdb").setExecutor(this);
     }
@@ -111,5 +113,17 @@ public class Main extends JavaPlugin implements CommandExecutor {
                 e.printStackTrace();
             }
         }
+    }
+
+    public PluginDatabase getDbHelper() {
+        return dbHelper;
+    }
+
+    public PluginDatabaseInfo getDbInfo() {
+        return dbInfo;
+    }
+
+    public String getVarPass() {
+        return varPass;
     }
 }
